@@ -4,9 +4,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
+import org.mariuszgromada.math.mxparser.Expression;
 public class MainActivity extends AppCompatActivity {
     private EditText input;
     private StringBuilder currentExpression = new StringBuilder();
@@ -14,7 +12,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         input = findViewById(R.id.input);
         setButtonListeners();
     }
@@ -39,10 +36,38 @@ public class MainActivity extends AppCompatActivity {
         switch (text) {
             case "C":
                 currentExpression.setLength(0);
-                break;
+                input.setText("");
+                return;
             case "=":
                 calculateResult();
                 return;
+            case "^":
+                currentExpression.append("pow(");
+                break;
+            case "√":
+                currentExpression.append("sqrt(");
+                break;
+            case "sin":
+                currentExpression.append("sin(");
+                break;
+            case "cos":
+                currentExpression.append("cos(");
+                break;
+            case "tan":
+                currentExpression.append("tan(");
+                break;
+            case "ln":
+                currentExpression.append("ln(");
+                break;
+            case "log":
+                currentExpression.append("log10(");
+                break;
+            case ")":
+                currentExpression.append(")");
+                break;
+            case ".":
+                currentExpression.append(",");
+                break;
             default:
                 currentExpression.append(text);
         }
@@ -50,18 +75,15 @@ public class MainActivity extends AppCompatActivity {
     }
     private void calculateResult() {
         String expression = currentExpression.toString()
-                .replace("×", "*")
-                .replace("÷", "/")
-                .replace("√", "Math.sqrt")
-                .replace("^", "Math.pow");
-        ScriptEngine engine = new ScriptEngineManager().getEngineByName("rhino");
-        try {
-            Object result = engine.eval(expression);
+                .replace("^", "pow");
+        Expression mathExpression = new Expression(expression);
+        double result = mathExpression.calculate();
+        if (Double.isNaN(result)) {
+            input.setText("Error");
+        } else {
             input.setText(String.valueOf(result));
             currentExpression.setLength(0);
             currentExpression.append(result);
-        } catch (ScriptException e) {
-            input.setText("Error");
         }
     }
 }
