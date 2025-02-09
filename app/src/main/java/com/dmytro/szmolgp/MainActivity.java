@@ -1,5 +1,8 @@
 package com.dmytro.szmolgp;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +17,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         input = findViewById(R.id.input);
         setButtonListeners();
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
     private void setButtonListeners() {
         int[] buttonIds = {
@@ -66,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 currentExpression.append(")");
                 break;
             case ".":
-                currentExpression.append(",");
+                currentExpression.append(".");
                 break;
             default:
                 currentExpression.append(text);
